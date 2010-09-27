@@ -1,0 +1,8 @@
+[Gedit Plugin]
+Loader=python
+Module=paired_char_autocomplete
+IAge=2
+Name=Paired Character Autocompletion
+Description=Automatically insert closing quotes and parenthesis
+Authors=Kevin McGuinness <kevin.mcguinness@gmail.com>
+Copyright=Copyright © 2010 Kevin McGuinness
