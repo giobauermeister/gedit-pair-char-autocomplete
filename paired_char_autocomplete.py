@@ -137,6 +137,7 @@ class PairAutocompletePlugin(gedit.Plugin):
   def move_to_end_of_line(self, doc):
     doc.begin_user_action()
     iter1 = doc.get_iter_at_mark(doc.get_insert())
+    iter1.set_line_offset(0)
     iter1.forward_to_line_end()
     doc.place_cursor(iter1)
     doc.end_user_action()
@@ -146,6 +147,7 @@ class PairAutocompletePlugin(gedit.Plugin):
     doc.begin_user_action()
     mark = doc.get_insert()
     iter1 = doc.get_iter_at_mark(mark)
+    iter1.set_line_offset(0)
     iter1.forward_to_line_end()
     doc.place_cursor(iter1)
     doc.insert_at_cursor(text)
