@@ -212,9 +212,8 @@ class PairAutocompletePlugin(gedit.Plugin):
       text_to_insert = '\n' + self.get_current_line_indent(doc)
       if event.state & gtk.gdk.SHIFT_MASK:
         text_to_insert = self.get_stmt_terminator(doc) + text_to_insert
-      handled = self.move_to_end_of_line_and_insert(doc, text_to_insert)
+      self.move_to_end_of_line_and_insert(doc, text_to_insert)
+      view.scroll_mark_onscreen(doc.get_insert())
+      handled = True
     return handled
-
-
-
 
