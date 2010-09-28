@@ -29,6 +29,8 @@ import gtk
 OPENING_PARENS = [ "(", "[", "{", "'", '"', '`' ]
 CLOSING_PARENS = [ ")", "]", "}", "'", '"', '`' ]
 DEFAULT_STMT_TERMINATOR = ';'
+LANG_META_STMT_TERMINATOR_KEY = 'statement-terminator'
+NEWLINE_CHAR = '\n'
 
 def to_char(keyval_or_char):
   if isinstance(keyval_or_char, str):
@@ -162,7 +164,7 @@ class PairAutocompletePlugin(gedit.Plugin):
     lang = doc.get_language()
     if lang is not None:
       # Allow this to be changed by the language definition
-      lang_terminator = lang.get_metadata('statement-terminator') 
+      lang_terminator = lang.get_metadata(LANG_META_STMT_TERMINATOR_KEY) 
       if lang_terminator is not None:
         terminator = lang_terminator
     return terminator
@@ -212,7 +214,7 @@ class PairAutocompletePlugin(gedit.Plugin):
         handled = self.auto_close_paren(doc, ch)
     if not handled and self.is_ctrl_enter(event):
       # Handle Ctrl+Return and Ctrl+Shift+Return
-      text_to_insert = '\n' + self.get_current_line_indent(doc)
+      text_to_insert = NEWLINE_CHAR + self.get_current_line_indent(doc)
       if event.state & gtk.gdk.SHIFT_MASK:
         text_to_insert = self.get_stmt_terminator(doc) + text_to_insert
       self.move_to_end_of_line_and_insert(doc, text_to_insert)
