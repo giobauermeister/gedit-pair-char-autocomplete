@@ -189,7 +189,10 @@ class PairAutocompletePlugin(gedit.Plugin):
   
   def should_auto_close_paren(self, doc):
     iter1 = doc.get_iter_at_mark(doc.get_insert())
-    return iter1.is_end() or iter1.ends_line() or iter1.get_char().isspace()
+    if iter1.is_end() or iter1.ends_line():
+      return True
+    char = iter1.get_char()
+    return not (char.isalnum() or char == '_') 
   
   def on_key_press(self, view, event, doc):
     handled = False
