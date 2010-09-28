@@ -6,3 +6,4 @@ Name=Paired Character Autocompletion
 Description=Automatically insert closing quotes and parenthesis
 Authors=Kevin McGuinness <kevin.mcguinness@gmail.com>
 Copyright=Copyright © 2010 Kevin McGuinness
+Icon=auto-pair-48

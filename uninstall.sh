@@ -1,6 +1,7 @@
 #!/bin/sh
 
 PLUGIN_FOLDER=~/.gnome2/gedit/plugins
+ICON_FOLDER=~/.icons
 
 uninstall_file() {
 	if [ -f $PLUGIN_FOLDER/$1 ]; then
@@ -9,8 +10,16 @@ uninstall_file() {
 	fi
 }
 
+uninstall_icon() {
+	if [ -f $ICON_FOLDER/$1 ]; then
+		echo " - removing $ICON_FOLDER/$1"
+		rm $ICON_FOLDER/$1 || exit 1
+	fi 
+}
+
 echo "\nUninstalling plugin"
+uninstall_file 'paired_char_autocomplete.gedit-plugin'
 uninstall_file 'paired_char_autocomplete.py'
 uninstall_file 'paired_char_autocomplete.pyc'
-uninstall_file 'paired_char_autocomplete.gedit-plugin'
+uninstall_icon 'auto-pair-48.png'
 
