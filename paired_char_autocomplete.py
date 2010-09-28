@@ -167,6 +167,30 @@ class PairAutocompletePlugin(gedit.Plugin):
         terminator = lang_terminator
     return terminator
   
+  def get_current_line_indent(self, doc):
+    it_start = doc.get_iter_at_mark(doc.get_insert())
+    it_start.set_line_offset(0)
+    it_end = it_start.copy()
+    it_end.forward_to_line_end()
+    indentation = []
+    while it_start.compare(it_end) < 0:
+      char = it_start.get_char()
+      if char == ' ' or char == '\t':
+        indentation.append(char)
+      else:
+        break
+      it_start.forward_char()
+    return ''.join(indentation)
+  
+  def is_ctrl_enter(self, event):
+    return (self.ctrl_enter_enabled and 
+      event.keyval == gtk.keysyms.Return and
+      event.state & gtk.gdk.CONTROL_MASK)
+  
+  def should_auto_close_paren(self, doc):
+    iter1 = doc.get_iter_at_mark(doc.get_insert())
+    return iter1.is_end() or iter1.ends_line() or iter1.get_char().isspace()
+  
   def on_key_press(self, view, event, doc):
     handled = False
     ch = to_char(event.keyval)
@@ -180,24 +204,17 @@ class PairAutocompletePlugin(gedit.Plugin):
       if doc.get_has_selection():
         # Enclose selection in parenthesis or quotes
         handled = self.enclose_selection(doc, ch)
-      else:
+      elif self.should_auto_close_paren(doc): 
         # Insert matching closing parenthesis and move cursor back one 
         handled = self.auto_close_paren(doc, ch)
-    if (not handled and 
-        self.ctrl_enter_enabled and
-        event.keyval == gtk.keysyms.Return and 
-        event.state & gtk.gdk.CONTROL_MASK):
+    if not handled and self.is_ctrl_enter(event):
+      # Handle Ctrl+Return and Ctrl+Shift+Return
+      text_to_insert = '\n' + self.get_current_line_indent(doc)
       if event.state & gtk.gdk.SHIFT_MASK:
-        # Move cursor to end of line and insert statement terminator
-        term = self.get_stmt_terminator(doc)
-        # TODO: Text is not being autoindented when we insert :-(
-        self.move_to_end_of_line_and_insert(doc, term)
-      else:
-        # Move cursor to end of line
-        self.move_to_end_of_line(doc)
-      # Allow regular handler to do the rest
-      handled = False
-      
-      
+        text_to_insert = self.get_stmt_terminator(doc) + text_to_insert
+      handled = self.move_to_end_of_line_and_insert(doc, text_to_insert)
     return handled
+
+
+
 
