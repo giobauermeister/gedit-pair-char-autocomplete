@@ -18,8 +18,8 @@ uninstall_icon() {
 }
 
 echo "\nUninstalling plugin"
-uninstall_file 'paired_char_autocomplete.gedit-plugin'
-uninstall_file 'paired_char_autocomplete.py'
-uninstall_file 'paired_char_autocomplete.pyc'
-uninstall_icon 'auto-pair-48.png'
+uninstall_file 'pair_char_completion.gedit-plugin'
+uninstall_file 'pair_char_completion.py'
+uninstall_file 'pair_char_completion.pyc'
+uninstall_icon 'pair_char_completion.png'
 

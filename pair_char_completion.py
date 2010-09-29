@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Gedit plugin that does paired character autocompletion.
+# Gedit plugin that does automatic pair character completion.
 #
 # Copyright © 2010, Kevin McGuinness <kevin.mcguinness@gmail.com>
 #
@@ -25,7 +25,7 @@ __author__ = 'Kevin McGuinness'
 import gedit
 import gtk
 
-
+# Defaults
 OPENING_PARENS = [ "(", "[", "{", "'", '"', '`' ]
 CLOSING_PARENS = [ ")", "]", "}", "'", '"', '`' ]
 DEFAULT_STMT_TERMINATOR = ';'
@@ -33,39 +33,15 @@ LANG_META_STMT_TERMINATOR_KEY = 'statement-terminator'
 NEWLINE_CHAR = '\n'
 
 def to_char(keyval_or_char):
+  """Convert a event keyval or character to a character"""
   if isinstance(keyval_or_char, str):
     return keyval_or_char
   return chr(keyval_or_char) if 0 < keyval_or_char < 128 else None
 
-def is_opening_paren(char):
-  return char in OPENING_PARENS
-
-def is_closing_paren(char):
-  return char in CLOSING_PARENS
-
-def are_matching_parens(opener, closer):
-  try:
-    return OPENING_PARENS.index(opener) == CLOSING_PARENS.index(closer)
-  except ValueError:
-    return False
-
-def get_matching_opening_paren(closer):
-  try:
-    return OPENING_PARENS[CLOSING_PARENS.index(closer)]
-  except ValueError:
-    return None
-
-def get_matching_closing_paren(opener):
-  try:
-    return CLOSING_PARENS[OPENING_PARENS.index(opener)]
-  except ValueError:
-    return None
-
-
-class PairAutocompletePlugin(gedit.Plugin):
-  """Paired character autocompletion for gedit"""
+class PairCompletionPlugin(gedit.Plugin):
+  """Automatic pair character completion for gedit"""
   
-  HandlerName = 'paired_char_autocomplete_handler'
+  HandlerName = 'pair_char_completion_handler'
  
   def __init__(self):
     gedit.Plugin.__init__(self)
@@ -89,9 +65,27 @@ class PairAutocompletePlugin(gedit.Plugin):
         handler_id = view.connect('key-press-event', self.on_key_press, doc)
         setattr(view, self.HandlerName, handler_id)
   
+  def is_opening_paren(self,char):
+    return char in OPENING_PARENS
+
+  def is_closing_paren(self,char):
+    return char in CLOSING_PARENS
+
+  def get_matching_opening_paren(self,closer):
+    try:
+      return OPENING_PARENS[CLOSING_PARENS.index(closer)]
+    except ValueError:
+      return None
+
+  def get_matching_closing_paren(self,opener):
+    try:
+      return CLOSING_PARENS[OPENING_PARENS.index(opener)]
+    except ValueError:
+      return None
+
   def would_balance_parens(self, doc, closing_paren):
     iter1 = doc.get_iter_at_mark(doc.get_insert())
-    opening_paren = get_matching_opening_paren(closing_paren)
+    opening_paren = self.get_matching_opening_paren(closing_paren)
     balance = 1
     while balance != 0 and not iter1.is_start():
       iter1.backward_char()
@@ -105,7 +99,7 @@ class PairAutocompletePlugin(gedit.Plugin):
     return doc.get_iter_at_mark(mark1).compare(doc.get_iter_at_mark(mark2))
   
   def enclose_selection(self, doc, opening_paren):
-    closing_paren = get_matching_closing_paren(opening_paren)
+    closing_paren = self.get_matching_closing_paren(opening_paren)
     doc.begin_user_action()
     mark1 = doc.get_insert()
     mark2 = doc.get_selection_bound()
@@ -119,7 +113,7 @@ class PairAutocompletePlugin(gedit.Plugin):
     return True
   
   def auto_close_paren(self, doc, opening_paren):
-    closing_paren = get_matching_closing_paren(opening_paren)
+    closing_paren = self.get_matching_closing_paren(opening_paren)
     doc.begin_user_action()
     doc.insert_at_cursor(opening_paren+closing_paren)
     iter1 = doc.get_iter_at_mark(doc.get_insert())
@@ -135,16 +129,7 @@ class PairAutocompletePlugin(gedit.Plugin):
     doc.place_cursor(iter1)
     doc.end_user_action()
     return True
-    
-  def move_to_end_of_line(self, doc):
-    doc.begin_user_action()
-    iter1 = doc.get_iter_at_mark(doc.get_insert())
-    iter1.set_line_offset(0)
-    iter1.forward_to_line_end()
-    doc.place_cursor(iter1)
-    doc.end_user_action()
-    return True
-  
+
   def move_to_end_of_line_and_insert(self, doc, text):
     doc.begin_user_action()
     mark = doc.get_insert()
@@ -199,13 +184,13 @@ class PairAutocompletePlugin(gedit.Plugin):
   def on_key_press(self, view, event, doc):
     handled = False
     ch = to_char(event.keyval)
-    if is_closing_paren(ch):
+    if self.is_closing_paren(ch):
       # Skip over closing parenthesis if doing so would mean that the 
       # preceeding parenthesis are correctly balanced
       if (self.get_char_under_cursor(doc) == ch and 
           self.would_balance_parens(doc, ch)):
         handled = self.move_cursor_forward(doc)
-    if not handled and is_opening_paren(ch):
+    if not handled and self.is_opening_paren(ch):
       if doc.get_has_selection():
         # Enclose selection in parenthesis or quotes
         handled = self.enclose_selection(doc, ch)

@@ -19,9 +19,9 @@ install_icon() {
 echo "\nInstalling plugin"
 mkdir -p $PLUGIN_FOLDER
 mkdir -p $ICON_FOLDER
-install_file 'paired_char_autocomplete.py'
-install_file 'paired_char_autocomplete.gedit-plugin'
-install_icon 'auto-pair-48.png'
+install_file 'pair_char_completion.py'
+install_file 'pair_char_completion.gedit-plugin'
+install_icon 'pair_char_completion.png'
 
 echo '\n*** Restart gedit to complete the installation ***\n'
 

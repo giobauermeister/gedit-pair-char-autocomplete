@@ -1,5 +1,5 @@
-Paired Character Autocompletion Plugin
-======================================
+Automatic pair character completion plugin for gedit
+====================================================
 
 Automatically closes brackets and quotes.
 
@@ -11,7 +11,7 @@ Installation
 2. Restart gedit if it is already started.
 
 3. Select Edit->Preferences from the menu. Click on the Plugins tab and enable 
-   the "Paired Character Autocompletion" plugin.
+   the "Pair Character Completion" plugin.
 
 
 Usage
@@ -33,6 +33,6 @@ Ctrl+Shift+Return.
 Notes
 -----
 
-* The default paired characters are: {},(),[],"",'',``
+* The default pair characters are: {},(),[],"",'',``
 * The default statement terminator is ';'
 
