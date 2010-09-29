@@ -17,18 +17,17 @@ Installation
 Usage
 -----
   
-When the plugin is enabled typing an open parenthesis, bracket, brace, or quote 
-character will automatically the corresponding character. For example if you 
-type a '[' character, a ']' will be automatically inserted. The plugin is smart 
-enough to automatically overwrite existing closing brackets when it is 
-appropriate.
+Automatically inserts a closing parenthesis ) whenever an opening parenthesis ( 
+is typed. The default paired characters are (), [], {}, "", '', and ``. The 
+plugin is smart enough to automatically overwrite existing closing brackets 
+when appropriate.
 
-If you want to enclose a block of text in brackets or quotes, select the text 
-you wish to enclose, and type the opening bracket or quote character.
+Selecting a block of text and typing an opening parenthesis or quote character 
+will enclose the selection in quotes or parenthesis.
 
 To quickly jump out of nested quotes or brackets and start a newline, type 
-Ctrl+Return. If you want to insert a semi-colon at the end of the line, type 
-Ctrl+Shift+Return.
+Ctrl+Return. To jump to the end of the line, insert a semicolon, and start a 
+newline, type Ctrl+Shift+Return. 
 
 Notes
 -----
