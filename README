@@ -29,6 +29,9 @@ To quickly jump out of nested quotes or brackets and start a newline, type
 Ctrl+Return. To jump to the end of the line, insert a semicolon, and start a 
 newline, type Ctrl+Shift+Return. 
 
+Custom sets of per-language pair chars are supported. To change the default 
+pair chars or add support for new languages, edit the file pair_char_lang.py.
+
 Notes
 -----
 

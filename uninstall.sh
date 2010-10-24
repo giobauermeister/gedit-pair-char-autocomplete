@@ -20,6 +20,8 @@ uninstall_icon() {
 echo "\nUninstalling plugin"
 uninstall_file 'pair_char_completion.gedit-plugin'
 uninstall_file 'pair_char_completion.py'
+uninstall_file 'pair_char_lang.py'
 uninstall_file 'pair_char_completion.pyc'
+uninstall_file 'pair_char_lang.pyc'
 uninstall_icon 'pair_char_completion.png'
 

@@ -20,6 +20,7 @@ echo "\nInstalling plugin"
 mkdir -p $PLUGIN_FOLDER
 mkdir -p $ICON_FOLDER
 install_file 'pair_char_completion.py'
+install_file 'pair_char_lang.py'
 install_file 'pair_char_completion.gedit-plugin'
 install_icon 'pair_char_completion.png'
 

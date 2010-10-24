@@ -19,18 +19,32 @@
 # Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 # 
 
-__version__ = '1.0.1'
+__version__ = '1.0.2'
 __author__ = 'Kevin McGuinness'
 
 import gedit
 import gtk
+import sys
+import os
 
 # Defaults
-OPENING_PARENS = [ "(", "[", "{", "'", '"', '`' ]
-CLOSING_PARENS = [ ")", "]", "}", "'", '"', '`' ]
 DEFAULT_STMT_TERMINATOR = ';'
 LANG_META_STMT_TERMINATOR_KEY = 'statement-terminator'
 NEWLINE_CHAR = '\n'
+
+# Map from language identifiers to (opening parens, closing parens) pairs
+language_parens = {}
+
+def add_language_parenthesis(name, spec):
+  """Add parenthesis for the given language. The spec should be a string in 
+     which each pair of characters represents a pair of parenthesis for the 
+     language, eg. "(){}[]".
+  """
+  parens = [], []
+  for i in range(0, len(spec), 2):
+    parens[0].append(spec[i+0])
+    parens[1].append(spec[i+1])
+  language_parens[name] = parens
 
 def to_char(keyval_or_char):
   """Convert a event keyval or character to a character"""
@@ -41,45 +55,48 @@ def to_char(keyval_or_char):
 class PairCompletionPlugin(gedit.Plugin):
   """Automatic pair character completion for gedit"""
   
-  HandlerName = 'pair_char_completion_handler'
+  ViewHandlerName = 'pair_char_completion_handler'
  
   def __init__(self):
     gedit.Plugin.__init__(self)
     self.ctrl_enter_enabled = True
+    self.language_id = 'plain'
+    self.opening_parens = language_parens['default'][0]
+    self.closing_parens = language_parens['default'][1]
  
   def activate(self, window):
     self.update_ui(window)
     
   def deactivate(self, window):
     for view in window.get_views():
-      handler_id = getattr(view, self.HandlerName, None)
+      handler_id = getattr(view, self.ViewHandlerName, None)
       if handler_id is not None:
         view.disconnect(handler_id)
-      setattr(view, self.HandlerName, None)
+      setattr(view, self.ViewHandlerName, None)
     
   def update_ui(self, window):
     view = window.get_active_view()
     doc = window.get_active_document()
     if isinstance(view, gedit.View) and doc:
-      if getattr(view, self.HandlerName, None) is None:
+      if getattr(view, self.ViewHandlerName, None) is None:
         handler_id = view.connect('key-press-event', self.on_key_press, doc)
-        setattr(view, self.HandlerName, handler_id)
+        setattr(view, self.ViewHandlerName, handler_id)
   
   def is_opening_paren(self,char):
-    return char in OPENING_PARENS
+    return char in self.opening_parens
 
   def is_closing_paren(self,char):
-    return char in CLOSING_PARENS
+    return char in self.closing_parens
 
   def get_matching_opening_paren(self,closer):
     try:
-      return OPENING_PARENS[CLOSING_PARENS.index(closer)]
+      return self.opening_parens[self.closing_parens.index(closer)]
     except ValueError:
       return None
 
   def get_matching_closing_paren(self,opener):
     try:
-      return CLOSING_PARENS[OPENING_PARENS.index(opener)]
+      return self.closing_parens[self.opening_parens.index(opener)]
     except ValueError:
       return None
 
@@ -181,8 +198,18 @@ class PairCompletionPlugin(gedit.Plugin):
     char = iter1.get_char()
     return not (char.isalnum() or char == '_') 
   
+  def update_language(self, doc):
+    lang = doc.get_language()
+    lang_id = lang.get_id() if lang is not None else 'plain'
+    if lang_id != self.language_id:
+      parens = language_parens.get(lang_id, language_parens['default'])
+      self.opening_parens = parens[0]
+      self.closing_parens = parens[1]
+      self.language_id = lang_id
+  
   def on_key_press(self, view, event, doc):
     handled = False
+    self.update_language(doc)
     ch = to_char(event.keyval)
     if self.is_closing_paren(ch):
       # Skip over closing parenthesis if doing so would mean that the 
@@ -207,3 +234,9 @@ class PairCompletionPlugin(gedit.Plugin):
       handled = True
     return handled
 
+# Load language parenthesis
+for path in sys.path:
+  fn = os.path.join(path, 'pair_char_lang.py')
+  if os.path.isfile(fn):
+    execfile(fn, {'lang': add_language_parenthesis})
+    break
