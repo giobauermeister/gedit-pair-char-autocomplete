@@ -1,3 +1,7 @@
+Version 1.0.3
+
+ * Added default pair chars for LaTeX documents
+
 Version 1.0.2
 
  * Support for different pair chars for different languages
