@@ -13,7 +13,6 @@ Installation
 3. Select Edit->Preferences from the menu. Click on the Plugins tab and enable 
    the "Pair Character Completion" plugin.
 
-
 Usage
 -----
   
@@ -37,4 +36,9 @@ Notes
 
 * The default pair characters are: {},(),[],"",'',``
 * The default statement terminator is ';'
+
+Credits
+-------
+
+Thanks to Matěj Cepl <mcepl@redhat.com> for patch to make plugin compatible with Gnome3
 

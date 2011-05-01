@@ -1,3 +1,7 @@
+Version 1.0.4-gnome3
+
+ * Created branch compatible with Gnome3. 
+
 Version 1.0.3
 
  * Added default pair chars for LaTeX documents

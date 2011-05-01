@@ -1,6 +1,6 @@
 #!/bin/sh
 
-PLUGIN_FOLDER=~/.gnome2/gedit/plugins
+PLUGIN_FOLDER=~/.local/share/gedit/plugins
 ICON_FOLDER=~/.icons
 
 uninstall_file() {
@@ -18,7 +18,7 @@ uninstall_icon() {
 }
 
 echo "\nUninstalling plugin"
-uninstall_file 'pair_char_completion.gedit-plugin'
+uninstall_file 'pair_char_completion.plugin'
 uninstall_file 'pair_char_completion.py'
 uninstall_file 'pair_char_lang.py'
 uninstall_file 'pair_char_completion.pyc'

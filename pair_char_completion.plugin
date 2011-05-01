@@ -1,4 +1,4 @@
-[Gedit Plugin]
+[Plugin]
 Loader=python
 Module=pair_char_completion
 IAge=2
