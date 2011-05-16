@@ -2,6 +2,11 @@ Version 1.0.4-gnome3
 
  * Created branch compatible with Gnome3. 
 
+Version 1.0.4
+  
+ * Integrated patch from callum.macdonald to insert two lines after bracket
+   followed by a return
+
 Version 1.0.3
 
  * Added default pair chars for LaTeX documents
