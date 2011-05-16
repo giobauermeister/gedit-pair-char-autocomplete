@@ -19,7 +19,7 @@
 # Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 # 
 
-__version__ = '1.0.3'
+__version__ = '1.0.4'
 __author__ = 'Kevin McGuinness'
 
 from gi.repository import Gtk, Gedit, GObject, Gdk
@@ -163,6 +163,20 @@ class PairCompletionPlugin(GObject.Object, Gedit.WindowActivatable):
     doc.end_user_action()
     return True
     
+  def insert_two_lines(self, doc, text):
+    doc.begin_user_action()
+    mark = doc.get_insert()
+    iter1 = doc.get_iter_at_mark(mark)
+    doc.place_cursor(iter1)
+    doc.insert_at_cursor(text)
+    doc.insert_at_cursor(text)
+    mark = doc.get_insert()
+    iter2 = doc.get_iter_at_mark(mark)
+    iter2.backward_chars(len(text))
+    doc.place_cursor(iter2)
+    doc.end_user_action()
+    return True
+    
   def get_char_under_cursor(self, doc):
     return doc.get_iter_at_mark(doc.get_insert()).get_char()
     
@@ -237,6 +251,14 @@ class PairCompletionPlugin(GObject.Object, Gedit.WindowActivatable):
       self.move_to_end_of_line_and_insert(doc, text_to_insert)
       view.scroll_mark_onscreen(doc.get_insert())
       handled = True
+    if not handled and event.keyval in (gtk.keysyms.Return, gtk.keysyms.KP_Enter):
+      # Enter was just pressed
+      if (self.is_closing_paren(self.get_char_under_cursor(doc)) and
+        self.would_balance_parens(doc, self.get_char_under_cursor(doc))):
+        # If the character under the cursor would balance parenthesis
+        text_to_insert = NEWLINE_CHAR + self.get_current_line_indent(doc)
+        self.insert_two_lines(doc, text_to_insert)
+        handled = True
     return handled
 
 # Load language parenthesis
