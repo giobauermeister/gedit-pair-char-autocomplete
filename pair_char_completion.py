@@ -248,8 +248,9 @@ class PairCompletionPlugin(gedit.Plugin):
       handled = True
     if not handled and event.keyval in (gtk.keysyms.Return, gtk.keysyms.KP_Enter):
       # Enter was just pressed
-      if (self.is_closing_paren(self.get_char_under_cursor(doc)) and
-        self.would_balance_parens(doc, self.get_char_under_cursor(doc))):
+      char_under_cusor = self.get_char_under_cursor(doc)
+      if (self.is_closing_paren(char_under_cusor) and
+        self.would_balance_parens(doc, char_under_cusor)):
         # If the character under the cursor would balance parenthesis
         text_to_insert = NEWLINE_CHAR + self.get_current_line_indent(doc)
         self.insert_two_lines(doc, text_to_insert)
