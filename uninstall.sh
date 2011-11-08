@@ -1,7 +1,7 @@
 #!/bin/sh
 
 PLUGIN_FOLDER=~/.local/share/gedit/plugins
-ICON_FOLDER=~/.icons
+ICON_FOLDER=~/.local/share/icons
 
 uninstall_file() {
 	if [ -f $PLUGIN_FOLDER/$1 ]; then

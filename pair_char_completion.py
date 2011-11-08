@@ -19,7 +19,7 @@
 # Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 # 
 
-__version__ = '1.0.4'
+__version__ = '1.0.5-gnome3'
 __author__ = 'Kevin McGuinness'
 
 from gi.repository import Gtk, Gedit, GObject, Gdk
@@ -55,7 +55,6 @@ class PairCompletionPlugin(GObject.Object, Gedit.WindowActivatable):
   """Automatic pair character completion for gedit"""
   
   ViewHandlerName = 'pair_char_completion_handler'
- 
   window = GObject.property(type=Gedit.Window)
  
   def __init__(self):
@@ -77,8 +76,7 @@ class PairCompletionPlugin(GObject.Object, Gedit.WindowActivatable):
   
   def do_update_state(self):
     self.update_ui()
-  
-  
+
   def update_ui(self):
     view = self.window.get_active_view()
     doc = self.window.get_active_document()
@@ -208,7 +206,7 @@ class PairCompletionPlugin(GObject.Object, Gedit.WindowActivatable):
   def is_ctrl_enter(self, event):
     return (self.ctrl_enter_enabled and 
       event.keyval == Gdk.KEY_Return and
-      event.get_state() & Gdk.EventMask.CONTROL_MASK)
+      event.get_state() & Gdk.ModifierType.CONTROL_MASK)
   
   def should_auto_close_paren(self, doc):
     iter1 = doc.get_iter_at_mark(doc.get_insert())
@@ -246,12 +244,12 @@ class PairCompletionPlugin(GObject.Object, Gedit.WindowActivatable):
     if not handled and self.is_ctrl_enter(event):
       # Handle Ctrl+Return and Ctrl+Shift+Return
       text_to_insert = NEWLINE_CHAR + self.get_current_line_indent(doc)
-      if event.get_state() & Gdk.EventMask.SHIFT_MASK:
+      if event.get_state() & Gdk.ModifierType.SHIFT_MASK:
         text_to_insert = self.get_stmt_terminator(doc) + text_to_insert
       self.move_to_end_of_line_and_insert(doc, text_to_insert)
       view.scroll_mark_onscreen(doc.get_insert())
       handled = True
-    if not handled and event.keyval in (gtk.keysyms.Return, gtk.keysyms.KP_Enter):
+    if not handled and event.keyval in (Gdk.KEY_Return, Gdk.KEY_KP_Enter):
       # Enter was just pressed
       char_under_cusor = self.get_char_under_cursor(doc)
       if (self.is_closing_paren(char_under_cusor) and
@@ -268,3 +266,5 @@ for path in sys.path:
   if os.path.isfile(fn):
     execfile(fn, {'lang': add_language_parenthesis})
     break
+    
+# ex:ts=2:sw=2:et:

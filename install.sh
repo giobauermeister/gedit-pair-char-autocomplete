@@ -3,7 +3,7 @@
 # Installs the plugin to the users folder
 
 PLUGIN_FOLDER=~/.local/share/gedit/plugins
-ICON_FOLDER=~/.icons
+ICON_FOLDER=~/.local/share/icons
 
 install_file() {
 	echo " - adding $1 to $PLUGIN_FOLDER"
