@@ -1,6 +1,7 @@
 Version 1.0.5-gnome3
 
  * Compatibility fixes for gnome 3 branch.
+ * Delete parenthesis in front of cursor when one before cursor is deleted
 
 Version 1.0.4-gnome3
 

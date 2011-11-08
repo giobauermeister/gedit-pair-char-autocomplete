@@ -175,6 +175,16 @@ class PairCompletionPlugin(GObject.Object, Gedit.WindowActivatable):
     doc.end_user_action()
     return True
     
+  def delete_both_parens(self, doc):
+    doc.begin_user_action()
+    start_iter = doc.get_iter_at_mark(doc.get_insert())
+    end_iter = start_iter.copy()
+    start_iter.backward_char()
+    end_iter.forward_char()
+    doc.delete(start_iter, end_iter)
+    doc.end_user_action()
+    return True
+    
   def get_char_under_cursor(self, doc):
     return doc.get_iter_at_mark(doc.get_insert()).get_char()
     
@@ -224,6 +234,17 @@ class PairCompletionPlugin(GObject.Object, Gedit.WindowActivatable):
       self.closing_parens = parens[1]
       self.language_id = lang_id
   
+  def should_delete_both_parens(self, doc, event):
+    if event.keyval == Gdk.KEY_BackSpace:
+      it = doc.get_iter_at_mark(doc.get_insert())
+      current_char = it.get_char()
+      if self.is_closing_paren(current_char):
+        it.backward_char()
+        previous_char = it.get_char()
+        matching_paren = self.get_matching_opening_paren(current_char)
+        return previous_char == matching_paren
+    return False
+  
   def on_key_press(self, view, event, doc):
     handled = False
     self.update_language(doc)
@@ -251,13 +272,15 @@ class PairCompletionPlugin(GObject.Object, Gedit.WindowActivatable):
       handled = True
     if not handled and event.keyval in (Gdk.KEY_Return, Gdk.KEY_KP_Enter):
       # Enter was just pressed
-      char_under_cusor = self.get_char_under_cursor(doc)
-      if (self.is_closing_paren(char_under_cusor) and
-        self.would_balance_parens(doc, char_under_cusor)):
+      char_under_cursor = self.get_char_under_cursor(doc)
+      if (self.is_closing_paren(char_under_cursor) and
+        self.would_balance_parens(doc, char_under_cursor)):
         # If the character under the cursor would balance parenthesis
         text_to_insert = NEWLINE_CHAR + self.get_current_line_indent(doc)
-        self.insert_two_lines(doc, text_to_insert)
-        handled = True
+        handled = self.insert_two_lines(doc, text_to_insert)
+    if not handled and self.should_delete_both_parens(doc, event):
+      # Delete parenthesis in front of cursor when one behind is deleted
+      handled = self.delete_both_parens(doc)
     return handled
 
 # Load language parenthesis
