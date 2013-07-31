@@ -287,7 +287,7 @@ class PairCompletionPlugin(GObject.Object, Gedit.WindowActivatable):
 for path in sys.path:
   fn = os.path.join(path, 'pair_char_lang.py')
   if os.path.isfile(fn):
-    execfile(fn, {'lang': add_language_parenthesis})
+    exec(compile(open(fn).read(), fn, 'exec'), {'lang': add_language_parenthesis})
     break
     
 # ex:ts=2:sw=2:et:
