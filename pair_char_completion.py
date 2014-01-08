@@ -19,7 +19,7 @@
 # Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 # 
 
-__version__ = '1.0.5-gnome3'
+__version__ = '1.0.6-gnome3'
 __author__ = 'Kevin McGuinness'
 
 from gi.repository import Gtk, Gedit, GObject, Gdk
